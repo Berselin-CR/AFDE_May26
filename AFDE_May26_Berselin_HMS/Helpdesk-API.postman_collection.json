@@ -1,0 +1,245 @@
+{
+  "info": {
+    "name": "Helpdesk Ticket Management System",
+    "description": "Phase 1 — Core ticket management API. Base URL: http://127.0.0.1:8000\n\nAuth: PUT and DELETE require header `X-Role: support_admin`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "ticket_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Tickets",
+      "item": [
+        {
+          "name": "Get All Tickets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tickets/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets", ""]
+            },
+            "description": "Returns a list of all tickets. No authentication required."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Ticket by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tickets/{{ticket_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets", "{{ticket_id}}"]
+            },
+            "description": "Returns a single ticket by its ID. Returns 404 if not found."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employee_name\": \"John Doe\",\n  \"department\": \"IT\",\n  \"issue_category\": \"VPN Issue\",\n  \"description\": \"Unable to connect to VPN since this morning\",\n  \"priority\": \"High\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tickets/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets", ""]
+            },
+            "description": "Creates a new ticket. Returns 201 on success. No authentication required.\n\n**issue_category** must be one of:\n- VPN Issue\n- Password Reset\n- Software Installation\n- Laptop Issue\n- Email Access\n- Network Connectivity\n- Hardware Request\n- Other\n\n**priority** must be one of: Low, Medium, High, Critical (defaults to Medium)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Ticket",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Role",
+                "value": "support_admin",
+                "description": "Required for PUT. Omitting this header returns 403."
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"In Progress\",\n  \"resolution_notes\": \"Investigating the VPN configuration on the user's machine\",\n  \"changed_by\": \"Admin User\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tickets/{{ticket_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets", "{{ticket_id}}"]
+            },
+            "description": "Updates an existing ticket. Requires `X-Role: support_admin` header. All fields are optional.\n\n**status** must be one of: Open, In Progress, Resolved, Rejected\n\n**priority** must be one of: Low, Medium, High, Critical\n\n**issue_category** must be one of:\n- VPN Issue\n- Password Reset\n- Software Installation\n- Laptop Issue\n- Email Access\n- Network Connectivity\n- Hardware Request\n- Other"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Ticket",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Role",
+                "value": "support_admin",
+                "description": "Required for DELETE. Omitting this header returns 403."
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tickets/{{ticket_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets", "{{ticket_id}}"]
+            },
+            "description": "Deletes a ticket by ID. Requires `X-Role: support_admin` header. Returns 404 if not found."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Ticket Activities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tickets/{{ticket_id}}/activities",
+              "host": ["{{base_url}}"],
+              "path": ["api", "tickets", "{{ticket_id}}", "activities"]
+            },
+            "description": "Returns the activity/status change log for a specific ticket. No authentication required."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "Search Tickets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/search?keyword=VPN&category=VPN Issue&status=Open",
+              "host": ["{{base_url}}"],
+              "path": ["api", "search"],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "VPN",
+                  "description": "Search across employee_name, department, and description"
+                },
+                {
+                  "key": "category",
+                  "value": "VPN Issue",
+                  "description": "Exact match: VPN Issue | Password Reset | Software Installation | Laptop Issue | Email Access | Network Connectivity | Hardware Request | Other"
+                },
+                {
+                  "key": "status",
+                  "value": "Open",
+                  "description": "Exact match: Open | In Progress | Resolved | Rejected"
+                }
+              ]
+            },
+            "description": "Search and filter tickets. All query params are optional — combine freely.\n\n- **keyword**: searches employee_name, department, description\n- **category**: exact category match\n- **status**: exact status match"
+          },
+          "response": []
+        },
+        {
+          "name": "Search by Keyword Only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/search?keyword=John",
+              "host": ["{{base_url}}"],
+              "path": ["api", "search"],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "John"
+                }
+              ]
+            },
+            "description": "Filter tickets by keyword across employee name, department, and description."
+          },
+          "response": []
+        },
+        {
+          "name": "Search by Status Only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/search?status=Open",
+              "host": ["{{base_url}}"],
+              "path": ["api", "search"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Open"
+                }
+              ]
+            },
+            "description": "Filter tickets by status. Valid values: Open, In Progress, Resolved, Rejected"
+          },
+          "response": []
+        },
+        {
+          "name": "Search by Category Only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/search?category=Password Reset",
+              "host": ["{{base_url}}"],
+              "path": ["api", "search"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Password Reset"
+                }
+              ]
+            },
+            "description": "Filter tickets by category. Valid values: VPN Issue, Password Reset, Software Installation, Laptop Issue, Email Access, Network Connectivity, Hardware Request, Other"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
