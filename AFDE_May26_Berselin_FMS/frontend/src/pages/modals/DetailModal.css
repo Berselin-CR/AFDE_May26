@@ -1,0 +1,4 @@
+.detail-rows { display: flex; flex-direction: column; }
+.detail-row { display: flex; padding: .75rem 0; border-bottom: 1px solid var(--border); gap: 1rem; font-size: .9rem; }
+.detail-row:last-child { border-bottom: none; }
+.detail-label { font-weight: 600; font-size: .85rem; color: var(--muted); width: 140px; flex-shrink: 0; }

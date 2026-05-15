@@ -1,0 +1,8 @@
+.search-bar {
+  display: flex; flex-wrap: wrap; gap: .75rem; align-items: flex-end;
+  background: var(--card); padding: 1.25rem; border-radius: var(--radius);
+  box-shadow: var(--shadow); margin-bottom: 1.25rem;
+}
+.search-field    { flex: 1 1 180px; }
+.search-field-sm { flex: 0 1 160px; }
+.search-actions  { display: flex; gap: .5rem; align-self: flex-end; }
